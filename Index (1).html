@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intro</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        font-family: Arial, sans-serif;
+        color: white;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Logo */
+    #logo {
+        width: 200px;
+        height: 200px;
+        margin-bottom: 20px;
+        border-radius: 50%;
+        animation: fadeIn 1.5s ease-out;
+    }
+  
+    /* Typing Text */
+    #typingText {
+        font-size: 26px;
+        width: 90%;
+        border-right: 2px solid white;
+        overflow: hidden;
+        animation: cursorBlink 0.8s infinite;
+        text-align: center;
+        white-space: normal;
+        word-wrap: break-word;
+        max-width: 350px;
+    }
+
+    /* Footer */
+    #footer {
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    @keyframes cursorBlink {
+        50% { border-color: transparent; }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+</style>
+</head>
+<body>
+
+<img id="logo" src="logopng.jpg" alt="Logo">
+<div id="typingText"></div>
+
+<!-- Footer Text -->
+<div id="footer">© All Rights Reserved | Ashwin CUET Academy</div>
+
+<script>
+    const text = "Welcome to Ashwin CUET Academy";
+    let index = 0;
+
+    function typeEffect() {
+        if (index < text.length) {
+            document.getElementById("typingText").textContent += text.charAt(index);
+            index++;
+            setTimeout(typeEffect, 80);
+        } else {
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 800);
+        }
+    }
+
+    typeEffect();
+</script>
+
+</body>
+</html>
