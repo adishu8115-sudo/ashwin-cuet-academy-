@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Mock Test</title>
+<style>
+body {
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#2b5876,#4e4376);
+}
+.container {
+    max-width:900px;
+    margin:20px auto;
+    padding:20px;
+    background:#fff;
+    border-radius:10px;
+}
+.quiz-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    height:20px; /* same height for title and timer */
+}
+.title-box {
+    padding:10px 20px;
+     margin-bottom:8px;
+    border:2px solid black;
+    border-radius:8px;
+    font-weight:bold;
+    font-size:20px;
+    display:flex;
+    align-items:center;
+    height:100%;
+}
+.timer-box {
+    display:flex;
+    margin-bottom:7px;
+    align-items:center;
+    gap:5px;
+    height:100%;
+}
+.timer-part {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+}
+.minute-box,.second-box {
+    width:40px;
+    height:40px;
+    border:2px solid black;
+    border-radius:5px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:red;
+    font-weight: bold:;
+    font-size:20px;
+}
+.label {
+    font-size:14px;
+    color:black;
+    font-weight:bold;
+    margin-top:2px;
+}
+.question-box {margin-bottom:50px;}
+.option {
+    border:1px solid #000;
+    border-radius:8px;
+    padding:12px;
+    margin:8px 0;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+}
+.option:hover {background:#f0f0f0;}
+.buttons {
+    display:flex;
+    justify-content:space-between;
+    margin-top:20px;
+}
+button {
+    padding:10px 15px;
+    border:none;
+    border-radius:8px;
+    background:#007bff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    flex:1;
+    margin:0 5px;
+}
+button:hover {opacity:0.9;}
+.correct-answer {
+    background-color:green;
+    color:white;
+    padding:5px 10px;
+    border-radius:5px;
+    display:inline-block;
+    margin-top:5px;
+}
+.unattempted {
+    background-color:darkblue;
+    color:white;
+    padding:5px 10px;
+    border-radius:5px;
+    display:inline-block;
+    margin-top:5px;
+}
+.correct-text, .incorrect-text, .unattempted-text {
+    color:darkblue;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="quiz-header">
+        <div class="title-box">Eklavya Mock Test 1</div>
+        <div class="timer-box">
+            <div class="timer-part">
+                <div class="minute-box" id="minute">50</div>
+                <div class="label">min</div>
+            </div>
+            <span>:</span>
+            <div class="timer-part">
+                <div class="second-box" id="second">00</div>
+                <div class="label"> sec ⏰</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+        <button onclick="previousQuestion()">Previous</button>
+        <button onclick="saveNext()">Save & Next</button>
+        <button onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div id="result" style="display:none;">
+        <h2>Test Result</h2>
+        <div id="score"></div>
+        <div id="performance"></div>
+        <div id="detailed-result"></div>
+    </div>
+</div>
+
+<script>
+const questions = [
+{"q":"1. हिंदी वर्ण माला में कितने स्वर होते हैं?","options":["a) 10","b) 13","c) 12","d) 15"],"answer":"b) 13"},
+{"q":"2. हिंदी वर्ण माला में कितने व्यंजन होते हैं?","options":["a) 33","b) 34","c) 35","d) 36"],"answer":"a) 33"},
+{"q":"3. “अ” किस प्रकार का वर्ण है?","options":["a) स्वर","b) व्यंजन","c) संयुक्त व्यंजन","d) योगवर्ण"],"answer":"a) स्वर"},
+{"q":"4. “क” किस प्रकार का वर्ण है?","options":["a) स्वर","b) व्यंजन","c) योगवर्ण","d) अनुस्वार"],"answer":"b) व्यंजन"},
+{"q":"5. “घ” वर्ण किस श्रेणी में आता है?","options":["a) स्वर","b) व्यंजन","c) योगवर्ण","d) अनुस्वार"],"answer":"b) व्यंजन"},
+{"q":"6. “ऋ” कौन सा वर्ण है?","options":["a) स्वर","b) व्यंजन","c) योगवर्ण","d) अनुस्वार"],"answer":"a) स्वर"},
+{"q":"7. “त्र” किस प्रकार का वर्ण है?","options":["a) स्वर","b) संयुक्त व्यंजन","c) व्यंजन","d) अनुस्वार"],"answer":"b) संयुक्त व्यंजन"},
+{"q":"8. “अः” किस वर्ण में आता है?","options":["a) स्वर","b) व्यंजन","c) अनुस्वार","d) अनुनासिक"],"answer":"d) अनुनासिक"},
+{"q":"9. व्यंजन कितने प्रकार के होते हैं?","options":["a) 5","b) 6","c) 7","d) 8"],"answer":"b) 6"},
+{"q":"10. “ङ” वर्ण किस वर्ग में आता है?","options":["a) तालव्य","b) तालव्य-मूर्धन्य","c) मूर्धन्य","d) दन्त्य"],"answer":"a) तालव्य"},
+{"q":"11. “च” किस श्रेणी का व्यंजन है?","options":["a) तालव्य","b) तालव्य-मूर्धन्य","c) दन्त्य","d) ओष्ठ्य"],"answer":"a) तालव्य"},
+{"q":"12. स्वर वर्ण कितने प्रकार के होते हैं?","options":["a) 2","b) 3","c) 4","d) 5"],"answer":"b) 3"},
+{"q":"13. हिंदी वर्णमाला में “य” किस वर्ग का व्यंजन है?","options":["a) तालव्य","b) मूर्धन्य","c) ओष्ठ्य","d) दन्त्य"],"answer":"b) मूर्धन्य"},
+{"q":"14. अनुस्वार को किस प्रकार का वर्ण माना जाता है?","options":["a) स्वर","b) व्यंजन","c) योगवर्ण","d) अनुनासिक"],"answer":"d) अनुनासिक"},
+{"q":"15. योगवर्ण कितने प्रकार के होते हैं?","options":["a) 2","b) 3","c) 4","d) 5"],"answer":"b) 3"},
+{"q":"16. “क्ष” किस प्रकार का वर्ण है?","options":["a) स्वर","b) व्यंजन","c) संयुक्त व्यंजन","d) अनुनासिक"],"answer":"c) संयुक्त व्यंजन"},
+{"q":"17. “ह” वर्ण किस वर्ग का व्यंजन है?","options":["a) तालव्य","b) कंठ्य","c) मूर्धन्य","d) ओष्ठ्य"],"answer":"b) कंठ्य"},
+{"q":"18. हिंदी में कुल कितने वर्ण हैं?","options":["a) 46","b) 49","c) 52","d) 44"],"answer":"c) 52"},
+{"q":"19. “ञ” किस श्रेणी में आता है?","options":["a) तालव्य","b) कंठ्य","c) मूर्धन्य","d) तालव्य-मूर्धन्य"],"answer":"c) मूर्धन्य"},
+{"q":"20. “फ” किस प्रकार का व्यंजन है?","options":["a) ओष्ठ्य","b) दन्त्य","c) कंठ्य","d) तालव्य"],"answer":"a) ओष्ठ्य"},
+{"q":"21. स्वर वर्ण को कितने भागों में बांटा जाता है?","options":["a) 2","b) 3","c) 4","d) 5"],"answer":"b) 3"},
+{"q":"22. “ख” वर्ण किस श्रेणी का व्यंजन है?","options":["a) तालव्य","b) कंठ्य","c) मूर्धन्य","d) दन्त्य"],"answer":"b) कंठ्य"},
+{"q":"23. संयुक्त व्यंजन का उदाहरण कौन सा है?","options":["a) क","b) त्र","c) अ","d) ई"],"answer":"b) त्र"},
+{"q":"24. “म” किस प्रकार का व्यंजन है?","options":["a) ओष्ठ्य","b) कंठ्य","c) तालव्य","d) मूर्धन्य"],"answer":"a) ओष्ठ्य"},
+{"q":"25. अनुस्वार को किस ध्वनि से जोड़ा जाता है?","options":["a) अ","b) म","c) ङ","d) ह"],"answer":"b) म"},
+{"q":"26. हिंदी वर्णमाला में कुल कितने स्वर और व्यंजन हैं?","options":["a) 45","b) 46","c) 47","d) 52"],"answer":"d) 52"},
+{"q":"27. “श” किस वर्ग का व्यंजन है?","options":["a) तालव्य","b) मूर्धन्य","c) दन्त्य","d) कंठ्य"],"answer":"b) मूर्धन्य"},
+{"q":"28. “ष” किस श्रेणी में आता है?","options":["a) तालव्य","b) मूर्धन्य","c) ओष्ठ्य","d) कंठ्य"],"answer":"b) मूर्धन्य"},
+{"q":"29. “स” किस प्रकार का व्यंजन है?","options":["a) तालव्य","b) दन्त्य","c) कंठ्य","d) ओष्ठ्य"],"answer":"b) दन्त्य"},
+{"q":"30. स्वर वर्ण का उच्चारण किस अंग से होता है?","options":["a) तालु","b) जीभ","c) गला","d) होंठ"],"answer":"c) गला"},
+{"q":"31. “ञ” किस प्रकार का व्यंजन है?","options":["a) तालव्य","b) मूर्धन्य","c) दन्त्य","d) ओष्ठ्य"],"answer":"b) मूर्धन्य"},
+{"q":"32. संयुक्त व्यंजन में कितने वर्ण जुड़ सकते हैं?","options":["a) 2","b) 3","c) 4","d) 5"],"answer":"a) 2"},
+{"q":"33. “ण” वर्ण किस श्रेणी का व्यंजन है?","options":["a) तालव्य","b) मूर्धन्य","c) कंठ्य","d) दन्त्य"],"answer":"b) मूर्धन्य"},
+{"q":"34. “ल” किस प्रकार का व्यंजन है?","options":["a) तालव्य","b) दन्त्य","c) ओष्ठ्य","d) मूर्धन्य"],"answer":"b) दन्त्य"},
+{"q":"35. “र” किस श्रेणी का व्यंजन है?","options":["a) तालव्य","b) मूर्धन्य","c) कंठ्य","d) दन्त्य"],"answer":"b) मूर्धन्य"},
+{"q":"36. “व” किस प्रकार का व्यंजन है?","options":["a) ओष्ठ्य","b) दन्त्य","c) कंठ्य","d) तालव्य"],"answer":"a) ओष्ठ्य"},
+{"q":"37. “ह” व्यंजन किस अंग से उच्चारित होता है?","options":["a) गला","b) तालु","c) जीभ","d) होंठ"],"answer":"a) गला"},
+{"q":"38. “ङ्ग” किस प्रकार का संयुक्त व्यंजन है?","options":["a) कंठ्य + तालव्य","b) तालव्य + दन्त्य","c) कंठ्य + ओष्ठ्य","d) तालव्य + मूर्धन्य"],"answer":"a) कंठ्य + तालव्य"},
+{"q":"39. स्वर वर्ण में “ए” किस श्रेणी में आता है?","options":["a) ह्रस्व","b) दीर्घ","c) योगवर्ण","d) अनुनासिक"],"answer":"b) दीर्घ"},
+{"q":"40. “इ” किस प्रकार का स्वर है?","options":["a) ह्रस्व","b) दीर्घ","c) योगवर्ण","d) अनुनासिक"],"answer":"a) ह्रस्व"},
+{"q":"41. योगवर्ण कितने प्रकार के होते हैं?","options":["a) 2","b) 3","c) 4","d) 5"],"answer":"b) 3"},
+{"q":"42. “क्ष” किस वर्ग का संयुक्त व्यंजन है?","options":["a) क + ष","b) क + स","c) त + र","d) ज + ञ"],"answer":"a) क + ष"},
+{"q":"43. “त्र” किस वर्ग का संयुक्त व्यंजन है?","options":["a) त + र","b) द + र","c) क + स","d) प + र"],"answer":"a) त + र"},
+{"q":"44. “ज्ञ” किस प्रकार का संयुक्त व्यंजन है?","options":["a) ज + ञ","b) ज + य","c) क + ष","d) त + र"],"answer":"a) ज + ञ"},
+{"q":"45. अनुस्वार किस ध्वनि को दर्शाता है?","options":["a) न","b) म","c) ङ","d) ण"],"answer":"b) म"},
+{"q":"46. हिंदी वर्णमाला में कितने अनुनासिक वर्ण हैं?","options":["a) 1","b) 2","c) 3","d) 4"],"answer":"c) 3"},
+{"q":"47. “ं” किस ध्वनि को दर्शाता है?","options":["a) अनुस्वार","b) अनुनासिक","c) योगवर्ण","d) स्वर"],"answer":"a) अनुस्वार"},
+{"q":"48. हिंदी वर्णमाला में कुल कितने संयुक्त व्यंजन हैं?","options":["a) 10","b) 11","c) 12","d) 13"],"answer":"d) 13"},
+{"q":"49. “क् + ष = ?”","options":["a) क्ष","b) त्र","c) ज्ञ","d) श्र"],"answer":"a) क्ष"},
+{"q":"50. “ज् + ञ = ?”","options":["a) क्ष","b) ज्ञ","c) त्र","d) श्र"],"answer":"b) ज्ञ"}
+];
+
+let current = 0;
+let userAnswers = Array(questions.length).fill(null);
+let lockedQuestions = Array(questions.length).fill(false);
+let totalTime = 50*60;
+
+function startTimer(){
+    setInterval(()=>{
+        if(totalTime<=0){showResult(); return;}
+        totalTime--;
+        let min=Math.floor(totalTime/60);
+        let sec=totalTime%60;
+        document.getElementById("minute").textContent=min.toString().padStart(2,'0');
+        document.getElementById("second").textContent=sec.toString().padStart(2,'0');
+    },1000);
+}
+
+function showQuestion(){
+    const q = questions[current];
+    let html = `<div class="question-box"><h3>${q.q}</h3>`;
+    q.options.forEach(opt=>{
+        let disabled = lockedQuestions[current] ? 'pointer-events:none;opacity:0.6;' : '';
+        let selected = userAnswers[current]===opt ? 'background:#d0e7ff;' : '';
+        html += `<div class="option" style="${selected} ${disabled}" onclick="selectOption('${opt}')">${opt}</div>`;
+    });
+    html += `</div>`;
+    document.getElementById("quiz").innerHTML = html;
+}
+
+function selectOption(opt){
+    if(!lockedQuestions[current]){
+        userAnswers[current] = opt;
+        showQuestion();
+    }
+}
+
+function previousQuestion(){
+    if(current>0){current--; showQuestion();}
+}
+
+function nextQuestion(){
+    if(current < questions.length-1){current++; showQuestion();} 
+    else {showResult();}
+}
+
+function saveNext(){
+    lockedQuestions[current] = true;
+    nextQuestion();
+}
+
+function showResult(){
+    document.getElementById("quiz").style.display="none";
+    document.querySelector(".buttons").style.display="none";
+    document.querySelector(".quiz-header").style.display="none";
+    document.getElementById("result").style.display="block";
+
+    let totalScore=0, resultHtml="";
+    questions.forEach((q,i)=>{
+        let ua=userAnswers[i];
+        if(ua===null){
+            resultHtml+=`<p>${i+1}. ${q.q} <span class="unattempted-text">Unattempted</span><br><span class="correct-answer">${q.answer}</span></p>`;
+        } else if(ua===q.answer){
+            totalScore+=5;
+            resultHtml+=`<p>${i+1}. ${q.q} <span class="correct-text">Correct</span><br><span class="correct-answer">${q.answer}</span></p>`;
+        } else {
+            totalScore-=1;
+            resultHtml+=`<p>${i+1}. ${q.q} <span class="incorrect-text">Incorrect</span><br><span class="correct-answer">${q.answer}</span></p>`;
+        }
+    });
+
+    document.getElementById("score").textContent=`Score: ${totalScore} / ${questions.length*5}`;
+    let perf="";
+    if(totalScore<100) perf="Weak";
+    else if(totalScore>=100 && totalScore<150) perf="Need Improvement";
+    else if(totalScore>=150 && totalScore<200) perf="Good";
+    else if(totalScore>=200 && totalScore<250) perf="Very Good";
+    else perf="Excellent";
+    document.getElementById("performance").textContent=`Performance: ${perf}`;
+    document.getElementById("detailed-result").innerHTML=resultHtml;
+}
+
+startTimer();
+showQuestion();
+</script>
+</body>
+</html>

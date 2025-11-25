@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindi Mock Test</title>
+<style>
+body {
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#2b5876,#4e4376);
+}
+.container {
+    max-width:900px;
+    margin:20px auto;
+    padding:20px;
+    background:#fff;
+    border-radius:10px;
+}
+.quiz-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    height:20px; /* same height for title and timer */
+}
+.title-box {
+    padding:10px 20px;
+     margin-bottom:8px;
+    border:2px solid black;
+    border-radius:8px;
+    font-weight:bold;
+    font-size:20px;
+    display:flex;
+    align-items:center;
+    height:100%;
+}
+.timer-box {
+    display:flex;
+      margin-bottom:7px;
+    align-items:center;
+    gap:5px;
+    height:100%;
+}
+.timer-part {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+}
+.minute-box,.second-box {
+    width:40px;
+    height:40px;
+    border:2px solid black;
+    border-radius:5px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:red;
+    font-weight:bold:;
+    font-size:20px;
+}
+.label {
+    font-size:14px;
+    color:black;
+    font-weight:bold;
+    margin-top:2px;
+}
+.question-box {margin-bottom:50px;}
+.option {
+    border:1px solid #000;
+    border-radius:8px;
+    padding:12px;
+    margin:8px 0;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+}
+.option:hover {background:#f0f0f0;}
+.buttons {
+    display:flex;
+    justify-content:space-between;
+    margin-top:20px;
+}
+button {
+    padding:10px 15px;
+    border:none;
+    border-radius:8px;
+    background:#007bff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    flex:1;
+    margin:0 5px;
+}
+button:hover {opacity:0.9;}
+.correct-answer {
+    background-color:green;
+    color:white;
+    padding:5px 10px;
+    border-radius:5px;
+    display:inline-block;
+    margin-top:5px;
+}
+.unattempted {
+    background-color:darkblue;
+    color:white;
+    padding:5px 10px;
+    border-radius:5px;
+    display:inline-block;
+    margin-top:5px;
+}
+.correct-text, .incorrect-text, .unattempted-text {
+    color:darkblue;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="quiz-header">
+        <div class="title-box">Eklavya Mock Test 2</div>
+        <div class="timer-box">
+            <div class="timer-part">
+                <div class="minute-box" id="minute">50</div>
+                <div class="label">min</div>
+            </div>
+            <span>:</span>
+            <div class="timer-part">
+                <div class="second-box" id="second">00</div>
+                <div class="label">sec ⏰</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+        <button onclick="previousQuestion()">Previous</button>
+        <button onclick="saveNext()">Save & Next</button>
+        <button onclick="nextQuestion()">Next</button>
+    </div>
+
+    <div id="result" style="display:none;">
+        <h2>Test Result</h2>
+        <div id="score"></div>
+        <div id="performance"></div>
+        <div id="detailed-result"></div>
+    </div>
+</div>
+
+<script>
+const questions = [
+  {"q":"Q1: ‘ज्ञ’ किस प्रकार का है?","options":["a) संयुक्त","b) नासिक्य","c) अन्तःस्थ","d) ऊष्म"],"answer":"a) संयुक्त"},
+  {"q":"Q2: ‘क’ अक्षर कहाँ से उच्चारित होता है?","options":["a) कण्ठ","b) तालु","c) मूर्धा","d) दंत"],"answer":"a) कण्ठ"},
+  {"q":"Q3: ‘ट’ अक्षर कहाँ से उच्चारित होता है?","options":["a) मूर्धा","b) दंत","c) कण्ठ","d) ओष्ठ"],"answer":"a) मूर्धा"},
+  {"q":"Q4: ‘म’ अक्षर कहाँ से उच्चारित होता है?","options":["a) ओष्ठ","b) कण्ठ","c) तालु","d) दंत"],"answer":"a) ओष्ठ"},
+  {"q":"Q5: ‘छ’ अक्षर कहाँ से उच्चारित होता है?","options":["a) तालु","b) कण्ठ","c) मूर्धा","d) ओष्ठ"],"answer":"a) तालु"},
+  {"q":"Q6: ‘ह’ अक्षर कहाँ से उच्चारित होता है?","options":["a) कण्ठ-ओष्ठ","b) तालु","c) दंत","d) मूर्धा"],"answer":"a) कण्ठ-ओष्ठ"},
+  {"q":"Q7: ‘त्र’ किस प्रकार का वर्ण है?","options":["a) स्वर","b) संयुक्त व्यंजन","c) व्यंजन","d) अनुस्वार"],"answer":"b) संयुक्त व्यंजन"},
+  {"q":"Q8: ‘न’ अक्षर कहाँ से उच्चारित होता है?","options":["a) दंत","b) कण्ठ","c) मूर्धा","d) तालु"],"answer":"a) दंत"},
+  {"q":"Q9: ‘प’ अक्षर कहाँ से उच्चारित होता है?","options":["a) ओष्ठ","b) दंत","c) तालु","d) कण्ठ"],"answer":"a) ओष्ठ"},
+  {"q":"Q10: ‘घ’ अक्षर कहाँ से उच्चारित होता है?","options":["a) कण्ठ","b) तालु","c) मूर्धा","d) दंत"],"answer":"a) कण्ठ"},
+  {"q":"Q11: ‘त’ अक्षर कहाँ से उच्चारित होता है?","options":["a) दंत","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) दंत"},
+  {"q":"Q12: ‘र’ अक्षर कहाँ से उच्चारित होता है?","options":["a) अन्तःस्थ","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) अन्तःस्थ"},
+  {"q":"Q13: ‘ल’ अक्षर कहाँ से उच्चारित होता है?","options":["a) अन्तःस्थ","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) अन्तःस्थ"},
+  {"q":"Q14: ‘व’ अक्षर कहाँ से उच्चारित होता है?","options":["a) दंत-ओष्ठ","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) दंत-ओष्ठ"},
+  {"q":"Q15: ‘कण्ठ’ से उच्चारित अक्षर कौन सा है?","options":["a) क, ख, ग, घ","b) च, छ, ज, झ","c) ट, ठ, ड, ढ","d) त, थ, द, ध"],"answer":"a) क, ख, ग, घ"},
+  {"q":"Q16: ‘तालु’ से उच्चारित अक्षर कौन सा है?","options":["a) च, छ, ज, झ","b) क, ख, ग, घ","c) ट, ठ, ड, ढ","d) प, फ, ब, भ"],"answer":"a) च, छ, ज, झ"},
+  {"q":"Q17: ‘मूर्धा’ से उच्चारित अक्षर कौन सा है?","options":["a) ट, ठ, ड, ढ, ण","b) क, ख, ग, घ","c) च, छ, ज, झ","d) त, थ, द, ध"],"answer":"a) ट, ठ, ड, ढ, ण"},
+  {"q":"Q18: ‘दंत’ से उच्चारित अक्षर कौन सा है?","options":["a) त, थ, द, ध, न","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) त, थ, द, ध, न"},
+  {"q":"Q19: ‘ओष्ठ’ से उच्चारित अक्षर कौन सा है?","options":["a) प, फ, ब, भ, म","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) प, फ, ब, भ, म"},
+  {"q":"Q20: ‘नासिका’ से उच्चारित अक्षर कौन सा है?","options":["a) ङ, ञ, ण, न, म","b) क, ख, ग, घ","c) च, छ, ज, झ","d) प, फ, ब, भ"],"answer":"a) ङ, ञ, ण, न, म"},
+  {"q":"Q21: ‘कण्ठ-तालु’ से उच्चारित अक्षर कौन सा है?","options":["a) क्ष, त्र, ज्ञ","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) क्ष, त्र, ज्ञ"},
+  {"q":"Q22: ‘कण्ठ-ओष्ठ’ से उच्चारित अक्षर कौन सा है?","options":["a) ह, ह्र","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) ह, ह्र"},
+  {"q":"Q23: ‘दंत-ओष्ठ’ से उच्चारित अक्षर कौन सा है?","options":["a) व, य","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) व, य"},
+  {"q":"Q24: ‘अन्तःस्थ’ से उच्चारित अक्षर कौन सा है?","options":["a) य, र, ल, व","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) य, र, ल, व"},
+  {"q":"Q25: ‘उष्मव्य’ से उच्चारित अक्षर कौन सा है?","options":["a) ह, ह्र","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) ह, ह्र"},
+  {"q":"Q26: ‘संगर्षी’ से उच्चारित अक्षर कौन सा है?","options":["a) ं, ः, ँ","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) ं, ः, ँ"},
+  {"q":"Q27: ‘संयुक्त/उत्क्षिप्त’ वर्ण कौन सा है?","options":["a) क्ष, त्र, ज्ञ, श्र, प्र, भ्र, क्र, ट्र, ड्र, ज्ञा, त्र्य, श्र्य, प्र्य, भ्र्य, क्र्य","b) क, ख, ग, घ","c) च, छ, ज, झ","d) ट, ठ, ड, ढ"],"answer":"a) क्ष, त्र, ज्ञ, श्र, प्र, भ्र, क्र, ट्र, ड्र, ज्ञा, त्र्य, श्र्य, प्र्य, भ्र्य, क्र्य"},
+  {"q":"Q28: ‘अ’ किस प्रकार का वर्ण है?","options":["a) स्वर","b) व्यंजन","c) संयुक्त व्यंजन","d) योगवर्ण"],"answer":"a) स्वर"},
+  {"q":"Q29: ‘क’ किस प्रकार का वर्ण है?","options":["a) स्वर","b) व्यंजन","c) योगवर्ण","d) अनुस्वार"],"answer":"b) व्यंजन"},
+  {"q":"Q30: ‘घ’ वर्ण किस श्रेणी में आता है?","options":["a) स्वर","b) व्यंजन","c) योगवर्ण","d) अनुस्वार"],"answer":"b) व्यंजन"},
+  {"q":"Q31: ‘ऋ’ कौन सा वर्ण है?","options":["a) स्वर","b) व्यंजन","c) योगवर्ण","d) अनुस्वार"],"answer":"a) स्वर"},
+  {"q":"Q32: ‘त्र’ किस प्रकार का वर्ण है?","options":["a) स्वर","b) संयुक्त व्यंजन","c) व्यंजन","d) अनुस्वार"],"answer":"b) संयुक्त व्यंजन"},
+  {"q":"Q33: ‘छ’ अक्षर किस स्थान से उच्चारित होता है?","options":["a) तालु","b) कण्ठ","c) मूर्धा","d) दंत"],"answer":"a) तालु"},
+  {"q":"Q34: ‘ट्र’ किस प्रकार का है?","options":["a) संयुक्त","b) मूर्धा","c) कण्ठ","d) तालु"],"answer":"a) संयुक्त"},
+  {"q":"Q35: ‘ड्र’ किस प्रकार का है?","options":["a) संयुक्त","b) मूर्धा","c) कण्ठ","d) तालु"],"answer":"a) संयुक्त"},
+  {"q":"Q36: ‘श्र’ किस प्रकार का है?","options":["a) संयुक्त","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) संयुक्त"},
+  {"q":"Q37: ‘प्र’ किस प्रकार का है?","options":["a) संयुक्त","b) दंत-ओष्ठ","c) कण्ठ","d) तालु"],"answer":"a) संयुक्त"},
+  {"q":"Q38: ‘भ्र’ किस प्रकार का है?","options":["a) संयुक्त","b) ओष्ठ","c) कण्ठ","d) तालु"],"answer":"a) संयुक्त"},
+  {"q":"Q39: ‘क्र’ किस प्रकार का है?","options":["a) संयुक्त","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) संयुक्त"},
+  {"q":"Q40: ‘ज्ञा’ किस प्रकार का है?","options":["a) संयुक्त","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) संयुक्त"},
+  {"q":"Q41: ‘श्र्य’ किस प्रकार का है?","options":["a) संयुक्त","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) संयुक्त"},
+  {"q":"Q42: ‘प्र्य’ किस प्रकार का है?","options":["a) संयुक्त","b) दंत-ओष्ठ","c) कण्ठ","d) तालु"],"answer":"a) संयुक्त"},
+  {"q":"Q43: ‘भ्र्य’ किस प्रकार का है?","options":["a) संयुक्त","b) ओष्ठ","c) कण्ठ","d) तालु"],"answer":"a) संयुक्त"},
+  {"q":"Q44: ‘क्र्य’ किस प्रकार का है?","options":["a) संयुक्त","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) संयुक्त"},
+  {"q":"Q45: ‘ङ’ अक्षर कहाँ से उच्चारित होता है?","options":["a) कण्ठ","b) तालु","c) मूर्धा","d) नासिका"],"answer":"d) नासिका"},
+  {"q":"Q46: ‘ञ’ अक्षर कहाँ से उच्चारित होता है?","options":["a) कण्ठ","b) तालु","c) मूर्धा","d) नासिका"],"answer":"d) नासिका"},
+  {"q":"Q47: ‘ण’ अक्षर कहाँ से उच्चारित होता है?","options":["a) मूर्धा","b) कण्ठ","c) दंत","d) नासिका"],"answer":"a) मूर्धा"},
+  {"q":"Q48: ‘न’ अक्षर कहाँ से उच्चारित होता है?","options":["a) दंत","b) कण्ठ","c) तालु","d) नासिका"],"answer":"a) दंत"},
+  {"q":"Q49: ‘व’ अक्षर कहाँ से उच्चारित होता है?","options":["a) दंत-ओष्ठ","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) दंत-ओष्ठ"},
+  {"q":"Q50: ‘य’ अक्षर कहाँ से उच्चारित होता है?","options":["a) दंत-ओष्ठ","b) कण्ठ","c) तालु","d) मूर्धा"],"answer":"a) दंत-ओष्ठ"}];
+let current = 0;
+let userAnswers = Array(questions.length).fill(null);
+let lockedQuestions = Array(questions.length).fill(false);
+let totalTime = 50*60;
+
+function startTimer(){
+    setInterval(()=>{
+        if(totalTime<=0){showResult(); return;}
+        totalTime--;
+        let min=Math.floor(totalTime/60);
+        let sec=totalTime%60;
+        document.getElementById("minute").textContent=min.toString().padStart(2,'0');
+        document.getElementById("second").textContent=sec.toString().padStart(2,'0');
+    },1000);
+}
+
+function showQuestion(){
+    const q = questions[current];
+    let html = `<div class="question-box"><h3>${q.q}</h3>`;
+    q.options.forEach(opt=>{
+        let disabled = lockedQuestions[current] ? 'pointer-events:none;opacity:0.6;' : '';
+        let selected = userAnswers[current]===opt ? 'background:#d0e7ff;' : '';
+        html += `<div class="option" style="${selected} ${disabled}" onclick="selectOption('${opt}')">${opt}</div>`;
+    });
+    html += `</div>`;
+    document.getElementById("quiz").innerHTML = html;
+}
+
+function selectOption(opt){
+    if(!lockedQuestions[current]){
+        userAnswers[current] = opt;
+        showQuestion();
+    }
+}
+
+function previousQuestion(){
+    if(current>0){current--; showQuestion();}
+}
+
+function nextQuestion(){
+    if(current < questions.length-1){current++; showQuestion();} 
+    else {showResult();}
+}
+
+function saveNext(){
+    lockedQuestions[current] = true;
+    nextQuestion();
+}
+
+function showResult(){
+    document.getElementById("quiz").style.display="none";
+    document.querySelector(".buttons").style.display="none";
+    document.querySelector(".quiz-header").style.display="none";
+    document.getElementById("result").style.display="block";
+
+    let totalScore=0, resultHtml="";
+    questions.forEach((q,i)=>{
+        let ua=userAnswers[i];
+        if(ua===null){
+            resultHtml+=`<p>${i+1}. ${q.q} <span class="unattempted-text">Unattempted</span><br><span class="correct-answer">${q.answer}</span></p>`;
+        } else if(ua===q.answer){
+            totalScore+=5;
+            resultHtml+=`<p>${i+1}. ${q.q} <span class="correct-text">Correct</span><br><span class="correct-answer">${q.answer}</span></p>`;
+        } else {
+            totalScore-=1;
+            resultHtml+=`<p>${i+1}. ${q.q} <span class="incorrect-text">Incorrect</span><br><span class="correct-answer">${q.answer}</span></p>`;
+        }
+    });
+
+    document.getElementById("score").textContent=`Score: ${totalScore} / ${questions.length*5}`;
+    let perf="";
+    if(totalScore<100) perf="Weak";
+    else if(totalScore>=100 && totalScore<150) perf="Need Improvement";
+    else if(totalScore>=150 && totalScore<200) perf="Good";
+    else if(totalScore>=200 && totalScore<250) perf="Very Good";
+    else perf="Excellent";
+    document.getElementById("performance").textContent=`Performance: ${perf}`;
+    document.getElementById("detailed-result").innerHTML=resultHtml;
+}
+
+startTimer();
+showQuestion();
+</script>
+</body>
+</html>
